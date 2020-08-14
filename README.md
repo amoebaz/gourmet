@@ -15,14 +15,14 @@ sudo apt install python3-pip
 sudo apt install imagemagick
 ```
 
-### Instalar pythond (Wand)[http://docs.wand-py.org/en/latest/guide/install.html]
+### Instalar pythond [Wand](http://docs.wand-py.org/en/latest/guide/install.html)
 
 ```bash
 pip install Wand
 ```
 
 
-### Instalar (telegram-send)[https://pypi.org/project/telegram-send/]
+### Instalar [telegram-send](https://pypi.org/project/telegram-send/)
 
 ```bash
 sudo pip3 install telegram-send
