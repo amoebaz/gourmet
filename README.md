@@ -39,4 +39,4 @@ Ejecutar el comando como
 python3 gourmet.py "texto a imprimir"
 ```
 
-En el caso de no indicar un texto específico, imprimirá "BUENOS DIAS"
+En el caso de no indicar un texto específico, imprimirá 'BUENOS DIAS'
