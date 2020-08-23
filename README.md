@@ -33,3 +33,10 @@ sudo pip3 install telegram-send
 Crear directorio "images_raw" con el banco de imágenes a usar. Incluir las imágenes necesarias
 Crear el directorio "images" donde se colocarán las imágenes procesadas.
 
+Ejecutar el comando como
+
+```bash
+python3 gourmet.py "texto a imprimir"
+```
+
+En el caso de no indicar un texto específico, imprimirá "BUENOS DIAS"

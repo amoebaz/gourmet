@@ -1,5 +1,5 @@
 import datetime
-import random, os
+import random, os, sys
 from wand.image import Image
 from wand.drawing import Drawing
 from wand.display import display
@@ -73,6 +73,14 @@ def date_string():
 
     return str
 
+#argsv
+
+main_message= 'BUENOS DIAS'
+
+if len(sys.argv) > 1:
+    main_message = sys.argv[1]
+
+
 
 #### MAIN MODULE
 
@@ -107,7 +115,7 @@ with Image(filename="images/"+filestringfullname) as img:
             draw.fill_color = Color('WHITE')
             draw.stroke_color = Color('BLACK')
             draw.font_weight = 700
-            str_hello = "BUENOS DÍAS"
+            str_hello = main_message
             metrics = draw.get_font_metrics(i, str_hello, multiline=False)
             draw.text(int((i.width - metrics.text_width)/2), int((metrics.text_height + 20)), str_hello)
             draw.font_size = 40
@@ -143,7 +151,7 @@ with Image(filename="images/"+filestringfullname) as img:
             str_hello = "gourmet retro"
             draw.font_size = 30
             metrics = draw.get_font_metrics(i_retro, str_hello, multiline=False)
-            draw.text(int((i_retro.width - metrics.text_width)/2), int((metrics.text_height + 100)), str_hello)
+            draw.text(int((i_retro.width - metrics.text_width)/2), int((i_retro.height - metrics.text_height)), str_hello)
             draw(i_retro)
 
             i_retro.save(filename='images/'+filestringname+"_retro"+filestringextension )
