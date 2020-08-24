@@ -76,9 +76,11 @@ def date_string():
 #argsv
 
 main_message= 'BUENOS DIAS'
+main_message_flag = False
 
 if len(sys.argv) > 1:
     main_message = sys.argv[1]
+    main_message_flag = True
 
 
 
@@ -96,14 +98,18 @@ now = datetime.datetime.now()
 filestringext = os.path.splitext("images/"+random_filename)
 filestringname = now.strftime("%Y")+now.strftime("%m")+now.strftime("%d")
 filestringextension = filestringext[1]
-filestringfullname = now.strftime("%Y")+now.strftime("%m")+now.strftime("%d")+filestringext[1]
+filestringfullname = now.strftime("%Y")+now.strftime("%m")+now.strftime("%d")
+
+if main_message_flag == True:
+    filestringfullname += "_" + sys.argv[1].replace(" ", "_").replace(".", "_")
+
 
 
 # Move selected image from original dir to the processed one using the date as filename
-os.system("mv images_raw/"+random_filename+" images/"+filestringfullname)
+os.system("mv images_raw/"+random_filename+" images/"+filestringfullname+filestringextension)
 
 # process image
-with Image(filename="images/"+filestringfullname) as img:
+with Image(filename="images/"+filestringfullname+filestringextension) as img:
     date_text = date_string()
 
     with img.clone() as i:
@@ -125,7 +131,7 @@ with Image(filename="images/"+filestringfullname) as img:
             i_retro = i.clone()
             draw(i)
 #            i.save(filename='images/result/test.jpg')
-            i.save(filename='images/'+filestringfullname)
+            i.save(filename='images/'+filestringfullname+filestringextension)
 
 #            with Image(width=100, height=100, pseudo="plasma:") as affinity:
 #                i_retro.remap(affinity)
@@ -154,12 +160,12 @@ with Image(filename="images/"+filestringfullname) as img:
             draw.text(int((i_retro.width - metrics.text_width)/2), int((i_retro.height - metrics.text_height)), str_hello)
             draw(i_retro)
 
-            i_retro.save(filename='images/'+filestringname+"_retro"+filestringextension )
+            i_retro.save(filename='images/'+filestringfullname+"_retro"+filestringextension )
             
 
             
-        os.system("telegram-send --image images/"+filestringfullname+" --caption "+random_filename)
-        os.system("telegram-send --image images/"+filestringname+"_retro"+filestringextension+" --caption "+random_filename)
+        os.system("telegram-send --image images/"+filestringfullname+filestringextension+" --caption "+random_filename)
+        os.system("telegram-send --image images/"+filestringfullname+"_retro"+filestringextension+" --caption "+random_filename)
 
 
 
