@@ -106,10 +106,10 @@ if main_message_flag == True:
 
 
 # Move selected image from original dir to the processed one using the date as filename
-os.system("mv images_raw/"+random_filename+" images/"+filestringfullname+filestringextension)
+os.system("mv images_raw/"+random_filename+" images/"+filestringname+"_original"+filestringextension)
 
 # process image
-with Image(filename="images/"+filestringfullname+filestringextension) as img:
+with Image(filename="images/"+filestringname+"_original"+filestringextension) as img:
     date_text = date_string()
 
     with img.clone() as i:
@@ -130,7 +130,6 @@ with Image(filename="images/"+filestringfullname+filestringextension) as img:
 
             i_retro = i.clone()
             draw(i)
-#            i.save(filename='images/result/test.jpg')
             i.save(filename='images/'+filestringfullname+filestringextension)
 
 #            with Image(width=100, height=100, pseudo="plasma:") as affinity:
