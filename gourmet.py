@@ -5,6 +5,9 @@ from wand.drawing import Drawing
 from wand.display import display
 from wand.color import *
 
+# Config
+main_message= 'BUENOS DIAS'
+
 # Make the image 1024px on the longest side
 def adjust_width_height(i):
     img_width = i.width
@@ -73,16 +76,15 @@ def date_string():
 
     return str
 
-#argsv
 
-main_message= 'BUENOS DIAS'
+#### MAIN PROGRAM
+
 main_message_flag = False
 
+# In case a new message is received as parameter, change it
 if len(sys.argv) > 1:
     main_message = sys.argv[1]
     main_message_flag = True
-
-
 
 #### MAIN MODULE
 
@@ -103,8 +105,6 @@ filestringfullname = now.strftime("%Y")+now.strftime("%m")+now.strftime("%d")
 if main_message_flag == True:
     filestringfullname += "_" + sys.argv[1].replace(" ", "_").replace(".", "_")
 
-
-
 # Move selected image from original dir to the processed one using the date as filename
 os.system("mv images_raw/"+random_filename+" images/"+filestringname+"_original"+filestringextension)
 
@@ -114,6 +114,7 @@ with Image(filename="images/"+filestringname+"_original"+filestringextension) as
 
     with img.clone() as i:
         with Drawing() as draw:
+            # Main image
             i = adjust_width_height(i)
             draw.font_family = 'Arial' 
             draw.font_size = 60
@@ -128,31 +129,22 @@ with Image(filename="images/"+filestringname+"_original"+filestringextension) as
             metrics = draw.get_font_metrics(i, date_text, multiline=False)
             draw.text(int((i.width - metrics.text_width)/2), int((i.height - metrics.text_height - 20)), date_text)
 
+            # Generation of the retro style photograph
             i_retro = i.clone()
             draw(i)
             i.save(filename='images/'+filestringfullname+filestringextension)
 
-#            with Image(width=100, height=100, pseudo="plasma:") as affinity:
-#                i_retro.remap(affinity)
-#            i.extent(width=i.width*2)
-#            i.composite(i_retro, top=0, left=i_retro.width)
-
-
-#            i_retro.posterize(levels=4, dither="riemersma")
             i_retro.quantize(number_colors=8, colorspace_type="srgb", treedepth=0, dither=False, measure_error=False)
-
 
             i_retro.statistic("median", width=10, height=10)
             i.extent(width=i.width*2)
             i.composite(i_retro, top=0, left=i_retro.width)
 
-
-
-
             percent = 10
             i_retro.sample(int(i_retro.width / percent), int(i_retro.height / percent))
             i_retro.sample(int(i_retro.width * percent), int(i_retro.height * percent))
 
+            # A small message for the retro version
             str_hello = "gourmet retro"
             draw.font_size = 30
             metrics = draw.get_font_metrics(i_retro, str_hello, multiline=False)
@@ -162,14 +154,6 @@ with Image(filename="images/"+filestringname+"_original"+filestringextension) as
             i_retro.save(filename='images/'+filestringfullname+"_retro"+filestringextension )
             
 
-            
+        # Both images generated are sent to the telegram group
         os.system("telegram-send --image images/"+filestringfullname+filestringextension+" --caption "+random_filename)
         os.system("telegram-send --image images/"+filestringfullname+"_retro"+filestringextension+" --caption "+random_filename)
-
-
-
-
-##            draw.font = 'wandtests/assets/League_Gothic.otf'
-##draw.font_size = 40
-##draw.text(image.width / 2, image.height / 2, 'Hello, world!')
-##draw(image)
