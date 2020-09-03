@@ -106,7 +106,7 @@ if main_message_flag == True:
     filestringfullname += "_" + sys.argv[1].replace(" ", "_").replace(".", "_")
 
 # Move selected image from original dir to the processed one using the date as filename
-os.system("mv images_raw/"+random_filename+" images/"+filestringname+"_original"+filestringextension)
+os.system("mv images_raw/"+random_filename.replace(" ", "\ ")+" images/"+filestringname+"_original"+filestringextension)
 
 # process image
 with Image(filename="images/"+filestringname+"_original"+filestringextension) as img:
