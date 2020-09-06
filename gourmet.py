@@ -1,5 +1,5 @@
 import datetime
-import random, os, sys
+import random, os, sys, re
 from wand.image import Image
 from wand.drawing import Drawing
 from wand.display import display
@@ -102,14 +102,15 @@ filestringname = now.strftime("%Y")+now.strftime("%m")+now.strftime("%d")
 filestringextension = filestringext[1]
 filestringfullname = now.strftime("%Y")+now.strftime("%m")+now.strftime("%d")
 
-if main_message_flag == True:
-    filestringfullname += "_" + sys.argv[1].replace(" ", "_").replace(".", "_")
+if main_message_flag == True: 
+    filestringfullname += "_" + re.sub(r'[^\w]', '_', sys.argv[1])
+
 
 # Move selected image from original dir to the processed one using the date as filename
-os.system("mv images_raw/"+random_filename.replace(" ", "\ ")+" images/"+filestringname+"_original"+filestringextension)
+os.system("mv images_raw/"+random_filename.replace(" ", "\ ")+" images/"+filestringfullname+"_original"+filestringextension)
 
 # process image
-with Image(filename="images/"+filestringname+"_original"+filestringextension) as img:
+with Image(filename="images/"+filestringfullname+"_original"+filestringextension) as img:
     date_text = date_string()
 
     with img.clone() as i:
