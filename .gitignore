@@ -1,3 +1,4 @@
 .vscode/
 images*/*
 tokens.txt
+__pycache__
