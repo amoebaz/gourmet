@@ -72,7 +72,7 @@ def date_string():
 
     return str
 
-def generate_image(main_message):
+def generate_image(main_message, image_name = None):
 
     #### MAIN MODULE
 
@@ -82,10 +82,16 @@ def generate_image(main_message):
 
     # Randomly selects an image from the original dir
     path = r"images_raw"
-    random_filename = random.choice([
-        x for x in os.listdir(path)
-        if os.path.isfile(os.path.join(path, x))
-    ])
+    random_filename = ""
+    if image_name == None:
+        random_filename = random.choice([
+            x for x in os.listdir(path)
+            if os.path.isfile(os.path.join(path, x))
+        ])
+    else:
+        random_filename = image_name
+
+    print("random_filename = " + random_filename)
 
     # Generate file string names
     now = datetime.datetime.now()

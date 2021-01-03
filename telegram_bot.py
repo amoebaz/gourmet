@@ -1,28 +1,14 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
-# pylint: disable=W0613, C0116
-# type: ignore[union-attr]
-# This program is dedicated to the public domain under the CC0 license.
-
-"""
-Simple Bot to reply to Telegram messages.
-First, a few handler functions are defined. Then, those functions are passed to
-the Dispatcher and registered at their respective places.
-Then, the bot is started and runs until we press Ctrl-C on the command line.
-Usage:
-Basic Echobot example, repeats messages.
-Press Ctrl-C on the command line or send a signal to the process to stop the
-bot.
-"""
 
 # import random, os, sys, re
 
-
+from io import BytesIO
 import logging, sys
 
 from image_processing import generate_image
-from telegram import Update
-from telegram.ext import Updater, CommandHandler, MessageHandler, Filters, CallbackContext
+from telegram import Update, InlineKeyboardButton, InlineKeyboardMarkup
+from telegram.ext import Updater, CommandHandler, MessageHandler, Filters, CallbackContext, CallbackQueryHandler
 
 # Enable logging
 logging.basicConfig(
@@ -43,6 +29,10 @@ def help_command(update: Update, context: CallbackContext) -> None:
     """Send a message when the command /help is issued."""
     update.message.reply_text('Help!')
 
+def gen_img(update: Update, context: CallbackContext) -> None:
+    """Generate an image."""
+    context.bot.send_photo(update['message']['chat_id'], open(generate_image(update.message.text)[1], 'rb'))
+
 
 def echo(update: Update, context: CallbackContext) -> None:
     """Echo the user message."""
@@ -50,6 +40,42 @@ def echo(update: Update, context: CallbackContext) -> None:
     #    update.message.reply_text(generate_image(update.message.text))
     context.bot.send_photo(update['message']['chat_id'], open(generate_image(update.message.text)[0], 'rb'))
 
+
+def photo(update: Update, context: CallbackContext):
+
+    file = context.bot.get_file(update.message.photo[2].file_id)
+    f =  BytesIO(file.download_as_bytearray())
+    
+    # f is now a file object you can do something with
+
+    with open("images_raw/tmp", "wb") as file:
+        file.write(f.getbuffer())
+    
+
+    # +update.message.photo[-1].file_id
+    keyboard = [
+        [
+            InlineKeyboardButton("Foto normal", callback_data="1:"),
+            InlineKeyboardButton("Foto retro", callback_data="2:"),
+        ],
+        [InlineKeyboardButton("¡Sorpresa!", callback_data="3:")],
+    ]
+
+    reply_markup = InlineKeyboardMarkup(keyboard)
+
+    context.bot.send_photo(update['message']['chat_id'], open(generate_image(update.message.caption, "tmp")[0], 'rb'))
+
+    update.message.reply_text('Please choose:', reply_markup=reply_markup)
+
+
+def button(update: Update, context: CallbackContext) -> None:
+    query = update.callback_query
+
+    # CallbackQueries need to be answered, even if no notification to the user is needed
+    # Some clients may have trouble otherwise. See https://core.telegram.org/bots/api#callbackquery
+    query.answer()
+
+    query.edit_message_text(text=f"Selected option: {query.data}")
 
 
 def main(main_token):
@@ -66,6 +92,11 @@ def main(main_token):
     # on different commands - answer in Telegram
     dispatcher.add_handler(CommandHandler("start", start))
     dispatcher.add_handler(CommandHandler("help", help_command))
+    dispatcher.add_handler(CallbackQueryHandler(button))
+
+    photo_handler = MessageHandler(Filters.photo, photo)
+    dispatcher.add_handler(photo_handler)
+
 
     # on noncommand i.e message - echo the message on Telegram
     dispatcher.add_handler(MessageHandler(Filters.text & ~Filters.command, echo))
