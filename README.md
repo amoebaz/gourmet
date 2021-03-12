@@ -18,7 +18,7 @@ sudo apt install imagemagick
 ### Instalar pythond [Wand](http://docs.wand-py.org/en/latest/guide/install.html)
 
 ```bash
-pip install Wand
+pip3 install Wand
 ```
 
 
