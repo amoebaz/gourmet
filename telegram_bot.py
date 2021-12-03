@@ -22,12 +22,17 @@ logger = logging.getLogger(__name__)
 # context. Error handlers also receive the raised TelegramError object in error.
 def start(update: Update, context: CallbackContext) -> None:
     """Send a message when the command /start is issued."""
-    update.message.reply_text('Hi!')
+    update.message.reply_text('¡Hola!')
+    update.message.reply_text('Bienvenido a GourmetBot\n'
+    +'Modo de uso:\n'
+    +'Modo de uso:\n'
+    +'Modo de uso:')
+
 
 
 def help_command(update: Update, context: CallbackContext) -> None:
     """Send a message when the command /help is issued."""
-    update.message.reply_text('Help!')
+    update.message.reply_text('I need somebody! :-P')
 
 def gen_img(update: Update, context: CallbackContext) -> None:
     """Generate an image."""
@@ -37,7 +42,7 @@ def gen_img(update: Update, context: CallbackContext) -> None:
 def echo(update: Update, context: CallbackContext) -> None:
     """Echo the user message."""
     update.message.reply_text(update.message.text)
-    #    update.message.reply_text(generate_image(update.message.text))
+    # Returns a random photo with the message provided
     context.bot.send_photo(update['message']['chat_id'], open(generate_image(update.message.text)[0], 'rb'))
 
 
@@ -47,7 +52,7 @@ def photo(update: Update, context: CallbackContext):
     f =  BytesIO(file.download_as_bytearray())
     
     # f is now a file object you can do something with
-
+    # generate a random name for tmp and destroy at the end
     with open("images_raw/tmp", "wb") as file:
         file.write(f.getbuffer())
     
@@ -63,6 +68,7 @@ def photo(update: Update, context: CallbackContext):
 
     reply_markup = InlineKeyboardMarkup(keyboard)
 
+    # TO-DO: change tmp filename with a random one and delete afterwards to avoid collisions
     context.bot.send_photo(update['message']['chat_id'], open(generate_image(update.message.caption, "tmp")[0], 'rb'))
 
     update.message.reply_text('Please choose:', reply_markup=reply_markup)
@@ -74,8 +80,20 @@ def button(update: Update, context: CallbackContext) -> None:
     # CallbackQueries need to be answered, even if no notification to the user is needed
     # Some clients may have trouble otherwise. See https://core.telegram.org/bots/api#callbackquery
     query.answer()
+ 
+ #   update.message.reply_text('FUERA')
+
 
     query.edit_message_text(text=f"Selected option: {query.data}")
+
+ #   if query.data == 1:
+ #       update.message.reply_text('NORMAL')
+ #       context.bot.send_photo(update['message']['chat_id'], open(generate_image(update.message.caption, "tmp")[0], 'rb'))
+ #   elif query.data == 2:
+ #       update.message.reply_text('RETRO')
+ #       context.bot.send_photo(update['message']['chat_id'], open(generate_image(update.message.caption, "tmp")[1], 'rb'))
+
+
 
 
 def main(main_token):
