@@ -78,7 +78,8 @@ def generate_image(main_message, image_name = None):
 
     # Truncate message to 20 chars
 
-    main_message = main_message[:20]
+    if main_message:
+        main_message = main_message[:20]
 
     # Randomly selects an image from the original dir
     path = r"images_raw"
@@ -96,13 +97,15 @@ def generate_image(main_message, image_name = None):
     # Generate file string names
     now = datetime.datetime.now()
     filestringext = os.path.splitext("images/"+random_filename)
-    filestringname = now.strftime("%Y")+now.strftime("%m")+now.strftime("%d")
+    # filestringname = now.strftime("%Y")+now.strftime("%m")+now.strftime("%d")
     filestringextension = filestringext[1]
     filestringfullname = now.strftime("%Y")+now.strftime("%m")+now.strftime("%d")
 
     #if main_message_flag == True: 
-    filestringfullname += "_" + re.sub(r'[^\w]', '_', main_message)
-
+    if main_message:
+        filestringfullname += "_" + re.sub(r'[^\w]', '_', main_message)
+    else:
+        filestringfullname += "_nada"
 
     # Move selected image from original dir to the processed one using the date as filename
     os.system("mv images_raw/"+random_filename.replace(" ", "\ ")+" images/"+filestringfullname+"_original"+filestringextension)
@@ -121,9 +124,10 @@ def generate_image(main_message, image_name = None):
                 draw.fill_color = Color('WHITE')
                 draw.stroke_color = Color('BLACK')
                 draw.font_weight = 700
-                str_hello = main_message
-                metrics = draw.get_font_metrics(i, str_hello, multiline=False)
-                draw.text(int((i.width - metrics.text_width)/2), int((metrics.text_height + 20)), str_hello)
+                if main_message:
+                    str_hello = main_message
+                    metrics = draw.get_font_metrics(i, str_hello, multiline=False)
+                    draw.text(int((i.width - metrics.text_width)/2), int((metrics.text_height + 20)), str_hello)
                 draw.font_size = 40
                 metrics = draw.get_font_metrics(i, date_text, multiline=False)
                 draw.text(int((i.width - metrics.text_width)/2), int((i.height - metrics.text_height - 20)), date_text)
